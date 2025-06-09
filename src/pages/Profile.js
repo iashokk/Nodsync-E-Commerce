@@ -17,12 +17,12 @@ export default function Profile() {
         // Fetch Firestore user doc
         const docSnap = await getDoc(doc(db, "users", firebaseUser.uid));
         if (docSnap.exists()) {
-            const data = docSnap.data();
-            setData({
-                ...data,
-                // Convert Firestore Timestamp to JS Date
-                createdAt: data.createdAt.toDate(),
-              });
+          const data = docSnap.data();
+          setData({
+            ...data,
+            // Convert Firestore Timestamp to JS Date
+            createdAt: data.createdAt.toDate(),
+          });
         }
       } else {
         setUser(null);
@@ -56,8 +56,9 @@ export default function Profile() {
         {profileData && (
           <>
             <Typography>
-  <strong>Member since:</strong> {profileData.createdAt.toDateString()}
-</Typography>
+              <strong>Member since:</strong>{" "}
+              {profileData.createdAt.toDateString()}
+            </Typography>
 
             {/* Add more fields here as you extend your user doc */}
           </>
