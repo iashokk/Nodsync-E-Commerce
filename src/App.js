@@ -9,7 +9,8 @@ import SignIn     from './pages/SignIn';
 import SignUp     from './pages/SignUp';
 import Profile    from './pages/Profile';
 import Home       from './pages/Home';
-
+import AdminDashboard from './pages/AdminDashboard';
+import ProductForm from './pages/ProductForm';
 function App() {
   return (
     <AuthProvider>
@@ -36,6 +37,16 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route path="/admin" element={
+  <PrivateRoute>
+    <AdminDashboard />
+  </PrivateRoute>
+}/>
+<Route path="/admin/product/:id" element={
+  <PrivateRoute>
+    <ProductForm />
+  </PrivateRoute>
+}/>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
