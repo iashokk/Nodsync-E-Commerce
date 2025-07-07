@@ -40,7 +40,7 @@ const { addToCart } = useCart(); // Assuming you have a CartContext to manage ca
 
   const handleAddToCart = () => {
     if (!product) return;
-    addToCart(product, 1);     // ← actually add 1 quantity of this product
+    addToCart(product, 1);    
     navigate('/cart');   
    
   };
