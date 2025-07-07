@@ -1,7 +1,6 @@
-// ===== src/components/Navbar.jsx =====
+// src/components/Navbar.jsx
 import React, { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
-
 import {
   AppBar,
   Toolbar,
@@ -16,7 +15,6 @@ import {
   useTheme,
   useMediaQuery
 } from '@mui/material';
-
 import MenuIcon         from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useAuth }      from '../contexts/AuthContext';
@@ -24,25 +22,31 @@ import { auth }         from '../firebase/config';
 import { signOut }      from 'firebase/auth';
 
 export default function Navbar() {
-  const theme       = useTheme();
-  const isMobile    = useMediaQuery(theme.breakpoints.down('md'));
+  const theme        = useTheme();
+  const isMobile     = useMediaQuery(theme.breakpoints.down('md'));
   const { currentUser } = useAuth();
-  const navigate    = useNavigate();
+  const navigate     = useNavigate();
+  
+  const [anchorNav, setAnchorNav]   = useState(null);
+  const [anchorUser, setAnchorUser] = useState(null);
 
-  const [anchorNav, anchorUser] = [React.useState(null), React.useState(null)];
-  const [openNav, setOpenNav]   = anchorNav;
-  const [openUser, setOpenUser] = anchorUser;
-
-  const handleNavOpen = e => setOpenNav(e.currentTarget);
-  const handleNavClose= () => setOpenNav(null);
-  const handleUserOpen = e => setOpenUser(e.currentTarget);
-  const handleUserClose= () => setOpenUser(null);
+  const handleNavOpen  = (e) => setAnchorNav(e.currentTarget);
+  const handleNavClose = ()      => setAnchorNav(null);
+  const handleUserOpen  = (e) => setAnchorUser(e.currentTarget);
+  const handleUserClose = ()      => setAnchorUser(null);
 
   const handleLogout = async () => {
     handleUserClose();
     await signOut(auth);
     navigate('/signin');
   };
+
+  // Common nav links
+  const navLinks = [
+    { label: 'Home',    to: '/' },
+    { label: 'Shop',    to: '/shop' },
+    { label: 'Orders',  to: '/orders' }
+  ];
 
   return (
     <AppBar
@@ -54,7 +58,7 @@ export default function Navbar() {
     >
       <Container maxWidth="lg">
         <Toolbar disableGutters>
-          {/* Logo */}
+          {/* Brand */}
           <Typography
             variant="h6"
             component={RouterLink}
@@ -68,19 +72,22 @@ export default function Navbar() {
               flexGrow: isMobile ? 1 : 0
             }}
           >
-            NodSync
+            NS-E Commerce
           </Typography>
 
-          {/* Desktop menu */}
+          {/* Desktop nav links */}
           {!isMobile && (
             <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-              <Button
-                component={RouterLink}
-                to="/shop"
-                sx={{ color: '#fff', mx: 1 }}
-              >
-                Shop
-              </Button>
+              {navLinks.map(({ label, to }) => (
+                <Button
+                  key={to}
+                  component={RouterLink}
+                  to={to}
+                  sx={{ color: '#fff', mx: 1 }}
+                >
+                  {label}
+                </Button>
+              ))}
 
               <IconButton
                 component={RouterLink}
@@ -92,7 +99,7 @@ export default function Navbar() {
             </Box>
           )}
 
-          {/* Auth buttons / avatar */}
+          {/* Auth controls */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             {currentUser ? (
               <IconButton onClick={handleUserOpen} sx={{ p: 0, ml: 2 }}>
@@ -108,11 +115,7 @@ export default function Navbar() {
                   component={RouterLink}
                   to="/signin"
                   variant="outlined"
-                  sx={{
-                    color: '#fff',
-                    borderColor: '#fff',
-                    mr: 1
-                  }}
+                  sx={{ color: '#fff', borderColor: '#fff', mr: 1 }}
                 >
                   Sign In
                 </Button>
@@ -120,10 +123,7 @@ export default function Navbar() {
                   component={RouterLink}
                   to="/signup"
                   variant="contained"
-                  sx={{
-                    bgcolor: '#fff',
-                    color: theme.palette.primary.main
-                  }}
+                  sx={{ bgcolor: '#fff', color: theme.palette.primary.main }}
                 >
                   Sign Up
                 </Button>
@@ -141,20 +141,23 @@ export default function Navbar() {
             )}
           </Box>
 
-          {/* Mobile drawer menu */}
+          {/* Mobile nav menu */}
           <Menu
-            anchorEl={openNav}
-            open={Boolean(openNav)}
+            anchorEl={anchorNav}
+            open={Boolean(anchorNav)}
             onClose={handleNavClose}
             keepMounted
           >
-            <MenuItem
-              component={RouterLink}
-              to="/shop"
-              onClick={handleNavClose}
-            >
-              Shop
-            </MenuItem>
+            {navLinks.map(({ label, to }) => (
+              <MenuItem
+                key={to}
+                component={RouterLink}
+                to={to}
+                onClick={handleNavClose}
+              >
+                {label}
+              </MenuItem>
+            ))}
             <MenuItem
               component={RouterLink}
               to="/cart"
@@ -198,8 +201,8 @@ export default function Navbar() {
 
           {/* User avatar menu */}
           <Menu
-            anchorEl={openUser}
-            open={Boolean(openUser)}
+            anchorEl={anchorUser}
+            open={Boolean(anchorUser)}
             onClose={handleUserClose}
             keepMounted
           >
